@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin | ESU Vegetables</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/jpeg" href="logo.jpeg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Poppins:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;600&display=swap" rel="stylesheet">
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<!-- ============ LOGIN GATE ============ -->
+<div id="loginGate" class="login-gate">
+  <div class="login-card">
+    <img src="logo.jpeg" alt="ESU Vegetables" class="login-logo">
+    <h1>Admin Login</h1>
+    <p class="login-note">Manage vegetable prices and customer list.</p>
+    <input type="password" id="loginPassword" class="form-control" placeholder="Enter admin password" autocomplete="current-password">
+    <button id="loginBtn" class="btn btn-admin-primary w-100 mt-3">Login</button>
+    <p id="loginError" class="login-error d-none">Incorrect password. Try again.</p>
+    <p class="login-hint">Default password: <code>esu1234</code> &mdash; change it after logging in.</p>
+    <p class="login-disclaimer">
+      <i class="bi bi-shield-exclamation"></i>
+      This is a simple client-side lock for a static site (no server/database), so it only
+      deters casual access &mdash; it is not secure against a determined visitor. Don't use it to
+      protect sensitive data.
+    </p>
+  </div>
+</div>
+
+<!-- ============ ADMIN APP ============ -->
+<div id="adminApp" class="admin-app d-none">
+
+  <header class="admin-header">
+    <div class="admin-header-inner">
+      <a href="index.html" class="admin-brand">
+        <img src="logo.jpeg" alt="ESU Vegetables">
+        <span>ESU Vegetables <small>Admin</small></span>
+      </a>
+      <div class="admin-header-actions">
+        <a href="index.html" class="btn btn-admin-ghost btn-sm"><i class="bi bi-globe2"></i> View Site</a>
+        <button id="changePassBtn" class="btn btn-admin-ghost btn-sm"><i class="bi bi-key-fill"></i> Change Password</button>
+        <button id="logoutBtn" class="btn btn-admin-ghost btn-sm"><i class="bi bi-box-arrow-right"></i> Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container admin-main">
+
+    <ul class="nav nav-pills admin-tabs" id="adminTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="veg-tab-btn" data-bs-toggle="pill" data-bs-target="#vegPane" type="button" role="tab">
+          <i class="bi bi-basket3-fill"></i> Vegetables
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="cust-tab-btn" data-bs-toggle="pill" data-bs-target="#custPane" type="button" role="tab">
+          <i class="bi bi-people-fill"></i> Our Customers
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+
+      <!-- ===================== VEGETABLES PANE ===================== -->
+      <div class="tab-pane fade show active" id="vegPane" role="tabpanel">
+
+        <div class="admin-toolbar">
+          <div class="admin-search">
+            <i class="bi bi-search"></i>
+            <input type="text" id="vegSearch" placeholder="Search vegetable (Tamil or English)...">
+          </div>
+          <div class="admin-toolbar-actions">
+            <span class="admin-count" id="vegCount">0 items</span>
+            <button class="btn btn-admin-primary btn-sm" id="vegAddBtn"><i class="bi bi-plus-lg"></i> Add Vegetable</button>
+            <button class="btn btn-admin-outline btn-sm" id="vegExportBtn"><i class="bi bi-download"></i> Export JSON</button>
+            <label class="btn btn-admin-outline btn-sm mb-0" for="vegImportInput"><i class="bi bi-upload"></i> Import JSON</label>
+            <input type="file" id="vegImportInput" accept="application/json" hidden>
+            <button class="btn btn-admin-outline btn-sm text-danger" id="vegResetBtn"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
+          </div>
+        </div>
+
+        <div class="table-responsive admin-table-wrap">
+          <table class="table admin-table align-middle">
+            <thead>
+              <tr>
+                <th style="width:60px">S.No</th>
+                <th>Vegetable Name (Tamil)</th>
+                <th>Vegetable Name (English)</th>
+                <th style="width:110px">Unit</th>
+                <th style="width:120px">Price (&#8377;)</th>
+                <th style="width:90px" class="text-center">Status</th>
+                <th style="width:110px" class="text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="vegTableBody"><!-- rows injected --></tbody>
+          </table>
+          <p id="vegEmptyMsg" class="admin-empty d-none">No vegetables found. Add one to get started.</p>
+        </div>
+      </div>
+
+      <!-- ===================== CUSTOMERS PANE ===================== -->
+      <div class="tab-pane fade" id="custPane" role="tabpanel">
+
+        <div class="admin-toolbar">
+          <div class="admin-search">
+            <i class="bi bi-search"></i>
+            <input type="text" id="custSearch" placeholder="Search customer...">
+          </div>
+          <div class="admin-toolbar-actions">
+            <span class="admin-count" id="custCount">0 items</span>
+            <button class="btn btn-admin-primary btn-sm" id="custAddBtn"><i class="bi bi-plus-lg"></i> Add Customer</button>
+            <button class="btn btn-admin-outline btn-sm" id="custExportBtn"><i class="bi bi-download"></i> Export JSON</button>
+            <label class="btn btn-admin-outline btn-sm mb-0" for="custImportInput"><i class="bi bi-upload"></i> Import JSON</label>
+            <input type="file" id="custImportInput" accept="application/json" hidden>
+            <button class="btn btn-admin-outline btn-sm text-danger" id="custResetBtn"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
+          </div>
+        </div>
+
+        <div class="table-responsive admin-table-wrap">
+          <table class="table admin-table align-middle">
+            <thead>
+              <tr>
+                <th style="width:70px">S.No</th>
+                <th>Customer Name</th>
+                <th style="width:110px" class="text-center">Status</th>
+                <th style="width:110px" class="text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="custTableBody"><!-- rows injected --></tbody>
+          </table>
+          <p id="custEmptyMsg" class="admin-empty d-none">No customers found. Add one to get started.</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ============ VEGETABLE ADD/EDIT MODAL ============ -->
+<div class="modal fade" id="vegModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content admin-modal">
+      <div class="modal-header">
+        <h5 class="modal-title" id="vegModalTitle">Add Vegetable</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="vegEditIndex" value="-1">
+        <div class="mb-3">
+          <label class="form-label">Vegetable Name (Tamil)</label>
+          <input type="text" id="vegNameTa" class="form-control ta-input" placeholder="எ.கா. தக்காளி">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Vegetable Name (English) *</label>
+          <input type="text" id="vegNameEn" class="form-control" placeholder="e.g. Tomato">
+        </div>
+        <div class="row">
+          <div class="col-6 mb-3">
+            <label class="form-label">Unit</label>
+            <select id="vegUnit" class="form-select">
+              <option value="kg">kg</option>
+              <option value="g">g</option>
+              <option value="bunch">bunch</option>
+              <option value="piece">piece</option>
+            </select>
+          </div>
+          <div class="col-6 mb-3">
+            <label class="form-label">Price (&#8377;)</label>
+            <input type="number" id="vegPrice" class="form-control" min="0" step="0.5" placeholder="0">
+          </div>
+        </div>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="vegStatus" checked>
+          <label class="form-check-label" for="vegStatus">Active (visible on website)</label>
+        </div>
+        <p id="vegFormError" class="text-danger small mt-2 d-none">Please enter the English name.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-admin-outline" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-admin-primary" id="vegSaveBtn">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CUSTOMER ADD/EDIT MODAL ============ -->
+<div class="modal fade" id="custModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content admin-modal">
+      <div class="modal-header">
+        <h5 class="modal-title" id="custModalTitle">Add Customer</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="custEditIndex" value="-1">
+        <div class="mb-3">
+          <label class="form-label">Customer Name *</label>
+          <input type="text" id="custName" class="form-control" placeholder="e.g. Madurai Amutha Hotel">
+        </div>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="custStatus" checked>
+          <label class="form-check-label" for="custStatus">Active (visible on website)</label>
+        </div>
+        <p id="custFormError" class="text-danger small mt-2 d-none">Please enter a customer name.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-admin-outline" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-admin-primary" id="custSaveBtn">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CHANGE PASSWORD MODAL ============ -->
+<div class="modal fade" id="passModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content admin-modal">
+      <div class="modal-header">
+        <h5 class="modal-title">Change Admin Password</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Current Password</label>
+          <input type="password" id="currentPass" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">New Password</label>
+          <input type="password" id="newPass" class="form-control">
+        </div>
+        <p id="passFormError" class="text-danger small mt-2 d-none">Current password is incorrect.</p>
+        <p id="passFormSuccess" class="text-success small mt-2 d-none">Password updated.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-admin-outline" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-admin-primary" id="passSaveBtn">Update Password</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="admin-toast" id="adminToast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

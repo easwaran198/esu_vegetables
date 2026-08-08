@@ -1,0 +1,171 @@
+/* =========================================================
+   ESU VEGETABLES — admin.css
+   Light, functional admin theme reusing the brand palette.
+   ========================================================= */
+
+:root{
+  --a-cream: #FBF7EC;
+  --a-ink: #24301F;
+  --a-ink-soft: #5B6B52;
+  --a-green-deep: #1F4A2E;
+  --a-leaf: #4E9A4B;
+  --a-leaf-light: #EAF4E4;
+  --a-tomato: #D8472F;
+  --a-gold: #E7B23A;
+  --a-border: #E4E0D2;
+  --a-radius: 14px;
+}
+
+*{ box-sizing: border-box; }
+
+body{
+  font-family: 'Poppins', sans-serif;
+  background: var(--a-cream);
+  color: var(--a-ink);
+  margin: 0;
+}
+
+.ta-input{ font-family: 'Noto Sans Tamil', 'Poppins', sans-serif; }
+
+/* ---------- Login Gate ---------- */
+.login-gate{
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 2rem;
+  background: radial-gradient(120% 140% at 15% -10%, #2E6B3E 0%, var(--a-green-deep) 45%, #123420 100%);
+}
+.login-card{
+  background: #fff;
+  border-radius: 20px;
+  padding: 2.4rem 2.2rem;
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.35);
+}
+.login-logo{ width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--a-gold); object-fit: cover; margin-bottom: 1rem; }
+.login-card h1{ font-family: 'Fraunces', serif; font-size: 1.5rem; color: var(--a-green-deep); margin-bottom: .3rem; }
+.login-note{ color: var(--a-ink-soft); font-size: .88rem; margin-bottom: 1.2rem; }
+.login-error{ color: var(--a-tomato); font-size: .84rem; margin-top: .8rem; }
+.login-hint{ font-size: .78rem; color: var(--a-ink-soft); margin-top: 1rem; }
+.login-hint code{ background: var(--a-leaf-light); color: var(--a-green-deep); padding: .1rem .4rem; border-radius: 6px; }
+.login-disclaimer{
+  font-size: .74rem;
+  color: var(--a-ink-soft);
+  background: var(--a-leaf-light);
+  border-radius: 10px;
+  padding: .7rem .8rem;
+  margin-top: 1rem;
+  text-align: left;
+  line-height: 1.5;
+}
+.login-disclaimer i{ color: var(--a-tomato); margin-right: .3rem; }
+
+/* ---------- Buttons ---------- */
+.btn-admin-primary{
+  background: var(--a-tomato); color: #fff; border: none; font-weight: 600;
+  border-radius: 999px; padding: .5rem 1.1rem;
+}
+.btn-admin-primary:hover{ background: #b93a25; color: #fff; }
+.btn-admin-outline{
+  background: #fff; color: var(--a-green-deep); border: 1px solid var(--a-border); font-weight: 500;
+  border-radius: 999px; padding: .45rem 1rem;
+}
+.btn-admin-outline:hover{ background: var(--a-leaf-light); color: var(--a-green-deep); }
+.btn-admin-ghost{
+  background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.3); font-weight: 500;
+  border-radius: 999px; padding: .4rem .9rem;
+}
+.btn-admin-ghost:hover{ background: rgba(255,255,255,0.12); color: #fff; }
+
+/* ---------- Header ---------- */
+.admin-header{ background: var(--a-green-deep); padding: 1rem 0; }
+.admin-header-inner{
+  max-width: 1140px; margin: 0 auto; padding: 0 1rem;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .8rem;
+}
+.admin-brand{ display: flex; align-items: center; gap: .6rem; color: #fff; font-weight: 700; font-family: 'Fraunces', serif; font-size: 1.1rem; }
+.admin-brand img{ width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--a-gold); object-fit: cover; }
+.admin-brand small{ display: block; font-family: 'Poppins', sans-serif; font-weight: 500; font-size: .68rem; color: var(--a-gold); letter-spacing: .08em; text-transform: uppercase; }
+.admin-header-actions{ display: flex; gap: .6rem; flex-wrap: wrap; }
+
+/* ---------- Main / Tabs ---------- */
+.admin-main{ padding: 2rem 1rem 4rem; }
+.admin-tabs{ margin-bottom: 1.4rem; gap: .6rem; }
+.admin-tabs .nav-link{
+  color: var(--a-ink-soft); font-weight: 600; border-radius: 999px; padding: .55rem 1.2rem;
+  display: flex; align-items: center; gap: .5rem;
+}
+.admin-tabs .nav-link.active{ background: var(--a-green-deep); color: #fff; }
+
+/* ---------- Toolbar ---------- */
+.admin-toolbar{
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+.admin-search{
+  position: relative; flex: 1 1 260px; max-width: 340px;
+}
+.admin-search i{ position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--a-ink-soft); }
+.admin-search input{
+  width: 100%; padding: .55rem 1rem .55rem 2.4rem; border-radius: 999px; border: 1px solid var(--a-border);
+  background: #fff; font-size: .9rem;
+}
+.admin-search input:focus{ outline: 2px solid var(--a-leaf); }
+.admin-toolbar-actions{ display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.admin-count{ font-size: .82rem; color: var(--a-ink-soft); margin-right: .3rem; }
+
+/* ---------- Table ---------- */
+.admin-table-wrap{ background: #fff; border-radius: var(--a-radius); box-shadow: 0 10px 26px rgba(31,74,46,0.08); overflow: hidden; }
+.admin-table{ margin-bottom: 0; }
+.admin-table thead th{
+  background: var(--a-leaf-light); color: var(--a-green-deep);
+  font-size: .78rem; text-transform: uppercase; letter-spacing: .04em;
+  border-bottom: none; padding: .9rem 1rem;
+}
+.admin-table tbody td{ padding: .8rem 1rem; font-size: .9rem; border-color: var(--a-border); vertical-align: middle; }
+.admin-table tbody tr:hover{ background: #FCFBF4; }
+.admin-table .ta-cell{ font-family: 'Noto Sans Tamil', 'Poppins', sans-serif; }
+.admin-empty{ text-align: center; padding: 2rem; color: var(--a-ink-soft); font-size: .9rem; }
+
+.status-pill{
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-size: .74rem; font-weight: 600; padding: .2rem .6rem; border-radius: 999px;
+}
+.status-pill.active{ background: var(--a-leaf-light); color: var(--a-leaf); }
+.status-pill.inactive{ background: #F3E7E4; color: var(--a-tomato); }
+
+.form-check-input:checked{ background-color: var(--a-leaf); border-color: var(--a-leaf); }
+
+.row-actions{ display: flex; gap: .4rem; justify-content: center; }
+.row-actions button{
+  border: none; background: var(--a-leaf-light); color: var(--a-green-deep);
+  width: 32px; height: 32px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
+  transition: background .2s ease, color .2s ease;
+}
+.row-actions button.delete-btn{ background: #F3E7E4; color: var(--a-tomato); }
+.row-actions button:hover{ background: var(--a-gold); color: #fff; }
+
+/* ---------- Modal ---------- */
+.admin-modal .modal-header, .admin-modal .modal-footer{ border-color: var(--a-border); }
+.admin-modal .modal-title{ font-family: 'Fraunces', serif; color: var(--a-green-deep); }
+
+/* ---------- Toast ---------- */
+.admin-toast{
+  position: fixed; bottom: 24px; right: 24px; z-index: 2000;
+  display: flex; flex-direction: column; gap: .5rem;
+}
+.admin-toast-item{
+  background: var(--a-green-deep); color: #fff; padding: .7rem 1.1rem; border-radius: 10px;
+  font-size: .86rem; box-shadow: 0 12px 26px rgba(0,0,0,0.25);
+  display: flex; align-items: center; gap: .5rem;
+  animation: toast-in .25s ease;
+}
+.admin-toast-item.error{ background: var(--a-tomato); }
+@keyframes toast-in{ from{ transform: translateY(10px); opacity: 0; } to{ transform: translateY(0); opacity: 1; } }
+
+@media (max-width: 576px){
+  .admin-toolbar{ flex-direction: column; align-items: stretch; }
+  .admin-search{ max-width: none; }
+  .admin-toolbar-actions{ justify-content: flex-start; }
+}

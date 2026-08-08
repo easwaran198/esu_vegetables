@@ -1,0 +1,8 @@
+[
+  { "sno": 1, "name": "Madurai Amutha Hotel",         "status": true },
+  { "sno": 2, "name": "SivaHari Catering",            "status": true },
+  { "sno": 3, "name": "Aaharam Catering",             "status": true },
+  { "sno": 4, "name": "Pandian Hotel, Ellis Nagar",   "status": true },
+  { "sno": 5, "name": "Velan Store",                  "status": true },
+  { "sno": 6, "name": "Heaven's Park",                "status": true }
+]
