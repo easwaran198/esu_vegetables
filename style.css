@@ -40,6 +40,51 @@ body{
   background: var(--cream);
   line-height: 1.65;
   overflow-x: hidden;
+  padding-top: 70px;
+}
+
+/* =========================================================
+   SITE LOADER
+   ========================================================= */
+.site-loader{
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: radial-gradient(120% 140% at 15% -10%, #2E6B3E 0%, var(--green-deep) 45%, #123420 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  transition: opacity .45s ease, visibility .45s ease;
+}
+.site-loader.hidden{ opacity: 0; visibility: hidden; pointer-events: none; }
+.loader-inner{
+  position: relative;
+  width: 96px; height: 96px;
+}
+.loader-ring{
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 4px solid rgba(231,178,58,0.18);
+  border-top-color: var(--gold);
+  animation: spin 1s linear infinite;
+}
+.loader-logo{
+  position: absolute;
+  inset: 14px;
+  width: calc(100% - 28px);
+  height: calc(100% - 28px);
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--gold);
+}
+.loader-text{
+  color: rgba(255,255,255,0.85);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: .03em;
 }
 
 h1,h2,h3,h4{
@@ -62,6 +107,16 @@ a{ text-decoration: none; }
 /* =========================================================
    HEADER / NAV
    ========================================================= */
+.site-header{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+}
+/* keep anchor targets clear of the fixed header */
+#about, #vegetables, #customers, #contact{ scroll-margin-top: 84px; }
+
 .site-header .navbar{
   background: rgba(251,247,236,0.92);
   backdrop-filter: blur(10px);
@@ -293,34 +348,45 @@ a{ text-decoration: none; }
 .about-list i{ color: var(--gold); margin-top: .2rem; }
 
 /* =========================================================
-   VEGETABLES GRID
+   VEGETABLES TABLE
    ========================================================= */
 .veg-section{ background: var(--cream-dim); }
-.veg-grid{
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: .85rem;
-}
-.veg-tag{
+.veg-table-wrap{
   background: #fff;
-  border: 1px solid rgba(31,74,46,0.1);
-  border-radius: 12px 12px 12px 2px;
-  padding: .85rem 1rem;
-  display: flex; align-items: center; gap: .55rem;
-  font-weight: 500;
-  font-size: .92rem;
-  color: var(--green-deep);
-  box-shadow: 0 6px 16px rgba(31,74,46,0.06);
-  transition: transform .22s ease, background .22s ease, color .22s ease, box-shadow .22s ease;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
 }
-.veg-tag i{ color: var(--leaf); font-size: 1.05rem; transition: color .22s ease; }
-.veg-tag:hover{
-  transform: translateY(-4px) rotate(-1deg);
+.veg-table{ margin-bottom: 0; }
+.veg-table thead th{
   background: var(--green-deep);
   color: #fff;
-  box-shadow: 0 16px 30px rgba(31,74,46,0.25);
+  font-size: .76rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  border-bottom: none;
+  padding: .9rem 1rem;
+  white-space: nowrap;
 }
-.veg-tag:hover i{ color: var(--gold); }
+.veg-table tbody td{
+  padding: .7rem 1rem;
+  font-size: .92rem;
+  color: var(--ink);
+  border-color: rgba(31,74,46,0.08);
+  vertical-align: middle;
+}
+.veg-table tbody tr{ transition: background .2s ease; }
+.veg-table tbody tr:hover{ background: var(--leaf-light); }
+.veg-table td:first-child{ color: var(--ink-soft); }
+.veg-table .veg-en{ font-weight: 600; color: var(--green-deep); }
+.veg-table .veg-ta{ font-family: 'Noto Sans Tamil', 'Poppins', sans-serif; opacity: .85; }
+.veg-table .veg-unit-cell{ color: var(--ink-soft); font-size: .88rem; white-space: nowrap; }
+.veg-table .veg-price-cell{ font-weight: 700; color: var(--tomato); white-space: nowrap; }
+
+/* footer admin link */
+.admin-link{ color: rgba(255,255,255,0.55); text-decoration: underline; }
+.admin-link:hover{ color: var(--gold); }
 
 /* =========================================================
    CUSTOMERS MARQUEE
