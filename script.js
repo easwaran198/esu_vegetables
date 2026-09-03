@@ -43,7 +43,6 @@ function esuLoadData(storageKey, jsonPath) {
   });
 }
 
-// Safely extract and format price directly from JSON
 function formatVegPrice(item) {
   var p = item.price;
   if (p !== undefined && p !== null && p !== '') {
@@ -56,16 +55,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* Hide Loader */
   var loader = document.getElementById('siteLoader');
-  var hideLoader = function () { if (loader) loader.classList.add('hidden'); };
+  var hideLoader = function () { 
+    if (loader && !loader.classList.contains('hidden')) {
+      loader.classList.add('hidden'); 
+    }
+  };
   window.addEventListener('load', hideLoader);
-  setTimeout(hideLoader, 1500);
+  setTimeout(hideLoader, 1000);
 
   /* Render Vegetables */
   var vegGrid = document.querySelector('.veg-grid');
   if (vegGrid) {
     esuLoadData(ESU_STORE.VEG_KEY, 'data/vegetables.json').then(function (vegetables) {
       
-      // Filter items where status is true
       var active = vegetables.filter(function (v) { 
         return v.status === true || v.status === undefined || v.status === 'true'; 
       });
@@ -77,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       /* Desktop Table View */
       var tableHtml = '' +
-        '<div class="table-responsive veg-table-wrap">' +
+        '<div class="veg-table-wrap">' +
           '<table class="table veg-table">' +
             '<thead>' +
               '<tr>' +
