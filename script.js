@@ -1,5 +1,5 @@
 /* =========================================================
-   ESU VEGETABLES — script.js (Mobile-Optimized Dynamic Renderer)
+   ESU VEGETABLES — script.js (Price Extraction Fix)
    ========================================================= */
 
 var ESU_STORE = {
@@ -43,6 +43,15 @@ function esuLoadData(storageKey, jsonPath) {
   });
 }
 
+// Helper function to safely format & extract price
+function formatVegPrice(v) {
+  var val = v.price !== undefined ? v.price : (v.rate !== undefined ? v.rate : v.cost);
+  if (val !== null && val !== undefined && val !== '') {
+    return '&#8377;' + val;
+  }
+  return 'Market Rate';
+}
+
 document.addEventListener('DOMContentLoaded', function () {
 
   /* Hide Loader */
@@ -55,7 +64,9 @@ document.addEventListener('DOMContentLoaded', function () {
   var vegGrid = document.querySelector('.veg-grid');
   if (vegGrid) {
     esuLoadData(ESU_STORE.VEG_KEY, 'data/vegetables.json').then(function (vegetables) {
-      var active = vegetables.filter(function (v) { return v.status; });
+      // Filter active items (or render all if status flag is not used)
+      var active = vegetables.filter(function (v) { return v.status === undefined || v.status === true || v.status === 1 || v.status === 'true'; });
+      
       if (!active.length) {
         vegGrid.innerHTML = '<p class="section-text text-center">Stock list is being updated. Please call us for today\'s price availability.</p>';
         return;
@@ -71,18 +82,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 '<th>Vegetable Name (Tamil)</th>' +
                 '<th>Vegetable Name (English)</th>' +
                 '<th>Unit</th>' +
-                '<th>Price (&#8377;)</th>' +
+                '<th>Price</th>' +
               '</tr>' +
             '</thead>' +
             '<tbody>' +
-              active.map(function (v) {
-                var hasPrice = v.price !== undefined && v.price !== null && v.price !== '';
+              active.map(function (v, idx) {
+                var sno = v.sno || (idx + 1);
+                var priceDisplay = formatVegPrice(v);
                 return '<tr>' +
-                  '<td>' + v.sno + '</td>' +
-                  '<td class="veg-ta">' + (v.name_ta || '&mdash;') + '</td>' +
-                  '<td class="veg-en">' + v.name_en + '</td>' +
+                  '<td>' + sno + '</td>' +
+                  '<td class="veg-ta">' + (v.name_ta || v.tamil_name || '&mdash;') + '</td>' +
+                  '<td class="veg-en">' + (v.name_en || v.english_name || v.name || 'Vegetable') + '</td>' +
                   '<td class="veg-unit-cell">' + (v.unit || 'kg') + '</td>' +
-                  '<td class="veg-price-cell">' + (hasPrice ? '&#8377;' + v.price : 'Market Rate') + '</td>' +
+                  '<td class="veg-price-cell">' + priceDisplay + '</td>' +
                 '</tr>';
               }).join('') +
             '</tbody>' +
@@ -93,14 +105,14 @@ document.addEventListener('DOMContentLoaded', function () {
       var cardsHtml = '' +
         '<div class="veg-cards-mobile">' +
           active.map(function (v) {
-            var hasPrice = v.price !== undefined && v.price !== null && v.price !== '';
+            var priceDisplay = formatVegPrice(v);
             return '<div class="veg-card-item">' +
               '<div class="veg-card-info">' +
-                '<span class="veg-card-en">' + v.name_en + '</span>' +
-                '<span class="veg-card-ta">' + (v.name_ta || '') + '</span>' +
+                '<span class="veg-card-en">' + (v.name_en || v.english_name || v.name || 'Vegetable') + '</span>' +
+                '<span class="veg-card-ta">' + (v.name_ta || v.tamil_name || '') + '</span>' +
               '</div>' +
               '<div class="veg-card-price-wrap">' +
-                '<span class="veg-card-price">' + (hasPrice ? '&#8377;' + v.price : 'Market Rate') + '</span>' +
+                '<span class="veg-card-price">' + priceDisplay + '</span>' +
                 '<span class="veg-card-unit">per ' + (v.unit || 'kg') + '</span>' +
               '</div>' +
             '</div>';
@@ -115,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var marqueeTrack = document.getElementById('marqueeTrack');
   if (marqueeTrack) {
     esuLoadData(ESU_STORE.CUST_KEY, 'data/customers.json').then(function (customers) {
-      var active = customers.filter(function (c) { return c.status; });
+      var active = customers.filter(function (c) { return c.status === undefined || c.status === true || c.status === 1 || c.status === 'true'; });
       if (!active.length) return;
       var itemHtml = active.map(function (c) {
         return '<div class="marquee-item"><i class="bi ' + esuCustomerIcon(c.name) + '"></i>' + c.name + '</div>';
