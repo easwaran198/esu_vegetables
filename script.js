@@ -1,11 +1,5 @@
 /* =========================================================
-   ESU VEGETABLES — script.js
-   Loads vegetables & customers from /data/*.json. The JSON
-   files on the server are the single source of truth (they
-   are updated by replacing them after an admin "Export JSON").
-   localStorage is only used as an offline fallback when the
-   fetch fails, so stale data never overrides a fresh upload.
-   Only items with status = true (checked) are shown.
+   ESU VEGETABLES — script.js (Mobile-Optimized Dynamic Renderer)
    ========================================================= */
 
 var ESU_STORE = {
@@ -13,7 +7,6 @@ var ESU_STORE = {
   CUST_KEY: 'esu_customers'
 };
 
-/* Guess a Bootstrap icon for a customer name, since the JSON only stores a name + status */
 function esuCustomerIcon(name) {
   var n = (name || '').toLowerCase();
   if (n.indexOf('hotel') > -1 || n.indexOf('restaurant') > -1) return 'bi-building';
@@ -24,11 +17,9 @@ function esuCustomerIcon(name) {
   if (n.indexOf('hospital') > -1) return 'bi-hospital-fill';
   if (n.indexOf('hall') > -1 || n.indexOf('marriage') > -1) return 'bi-flower3';
   if (n.indexOf('store') > -1 || n.indexOf('mart') > -1 || n.indexOf('super') > -1) return 'bi-shop';
-  if (n.indexOf('park') > -1 || n.indexOf('resort') > -1) return 'bi-tree-fill';
   return 'bi-basket-fill';
 }
 
-/* Read admin overrides from localStorage; fall back to null if none saved yet */
 function esuReadLocal(key) {
   try {
     var raw = window.localStorage.getItem(key);
@@ -38,7 +29,6 @@ function esuReadLocal(key) {
   }
 }
 
-/* Fetch the seed JSON file from /data */
 function esuFetchJson(path) {
   return fetch(path, { cache: 'no-store' }).then(function (res) {
     if (!res.ok) throw new Error('Failed to load ' + path);
@@ -46,8 +36,6 @@ function esuFetchJson(path) {
   });
 }
 
-/* Load a dataset: fetch the JSON on the server first (fresh),
-   and only fall back to localStorage if the fetch fails. */
 function esuLoadData(storageKey, jsonPath) {
   return esuFetchJson(jsonPath).catch(function () {
     var local = esuReadLocal(storageKey);
@@ -57,24 +45,24 @@ function esuLoadData(storageKey, jsonPath) {
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  /* ---------- Hide the site loader once everything has loaded ---------- */
+  /* Hide Loader */
   var loader = document.getElementById('siteLoader');
-  var hideLoader = function () {
-    if (loader) loader.classList.add('hidden');
-  };
+  var hideLoader = function () { if (loader) loader.classList.add('hidden'); };
   window.addEventListener('load', hideLoader);
-  setTimeout(hideLoader, 2500);
+  setTimeout(hideLoader, 2000);
 
-  /* ---------- Render vegetables grid ---------- */
+  /* Render Vegetables (Table for Desktop + Cards for Mobile) */
   var vegGrid = document.querySelector('.veg-grid');
   if (vegGrid) {
     esuLoadData(ESU_STORE.VEG_KEY, 'data/vegetables.json').then(function (vegetables) {
       var active = vegetables.filter(function (v) { return v.status; });
       if (!active.length) {
-        vegGrid.innerHTML = '<p class="section-text">Stock list is being updated. Please call us for today\'s availability.</p>';
+        vegGrid.innerHTML = '<p class="section-text text-center">Stock list is being updated. Please call us for today\'s price availability.</p>';
         return;
       }
-      vegGrid.innerHTML = '' +
+
+      /* Desktop Table View */
+      var tableHtml = '' +
         '<div class="table-responsive veg-table-wrap">' +
           '<table class="table veg-table">' +
             '<thead>' +
@@ -94,16 +82,36 @@ document.addEventListener('DOMContentLoaded', function () {
                   '<td class="veg-ta">' + (v.name_ta || '&mdash;') + '</td>' +
                   '<td class="veg-en">' + v.name_en + '</td>' +
                   '<td class="veg-unit-cell">' + (v.unit || 'kg') + '</td>' +
-                  '<td class="veg-price-cell">' + (hasPrice ? '&#8377;' + v.price : '&mdash;') + '</td>' +
+                  '<td class="veg-price-cell">' + (hasPrice ? '&#8377;' + v.price : 'Market Rate') + '</td>' +
                 '</tr>';
               }).join('') +
             '</tbody>' +
           '</table>' +
         '</div>';
+
+      /* Mobile Card View */
+      var cardsHtml = '' +
+        '<div class="veg-cards-mobile">' +
+          active.map(function (v) {
+            var hasPrice = v.price !== undefined && v.price !== null && v.price !== '';
+            return '<div class="veg-card-item">' +
+              '<div class="veg-card-info">' +
+                '<span class="veg-card-en">' + v.name_en + '</span>' +
+                '<span class="veg-card-ta">' + (v.name_ta || '') + '</span>' +
+              '</div>' +
+              '<div class="veg-card-price-wrap">' +
+                '<span class="veg-card-price">' + (hasPrice ? '&#8377;' + v.price : 'Market Rate') + '</span>' +
+                '<span class="veg-card-unit">per ' + (v.unit || 'kg') + '</span>' +
+              '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>';
+
+      vegGrid.innerHTML = tableHtml + cardsHtml;
     });
   }
 
-  /* ---------- Render customer marquee (duplicated for a seamless loop) ---------- */
+  /* Render Customers Marquee */
   var marqueeTrack = document.getElementById('marqueeTrack');
   if (marqueeTrack) {
     esuLoadData(ESU_STORE.CUST_KEY, 'data/customers.json').then(function (customers) {
@@ -112,25 +120,21 @@ document.addEventListener('DOMContentLoaded', function () {
       var itemHtml = active.map(function (c) {
         return '<div class="marquee-item"><i class="bi ' + esuCustomerIcon(c.name) + '"></i>' + c.name + '</div>';
       }).join('');
-      // duplicate the sequence once so the CSS translateX(-50%) loop is seamless
       marqueeTrack.innerHTML = itemHtml + itemHtml;
     });
   }
 
-  /* ---------- Sticky nav shadow on scroll ---------- */
+  /* Sticky Header */
   var navbar = document.querySelector('.site-header .navbar');
   var onScroll = function () {
     if (!navbar) return;
-    if (window.scrollY > 12) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
-    }
+    if (window.scrollY > 12) navbar.classList.add('scrolled');
+    else navbar.classList.remove('scrolled');
   };
   window.addEventListener('scroll', onScroll);
   onScroll();
 
-  /* ---------- Collapse mobile menu after a link is tapped ---------- */
+  /* Auto-close Mobile Nav */
   var navLinks = document.querySelectorAll('#mainNav .nav-link');
   var navCollapseEl = document.getElementById('mainNav');
   navLinks.forEach(function (link) {
@@ -142,17 +146,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  /* ---------- Footer year ---------- */
+  /* Footer Dynamic Year */
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  /* ---------- AOS init ---------- */
+  /* AOS Initialization */
   if (window.AOS) {
-    window.AOS.init({
-      duration: 800,
-      once: true,
-      offset: 60,
-      easing: 'ease-out-cubic'
-    });
+    window.AOS.init({ duration: 800, once: true, offset: 50 });
   }
 });
