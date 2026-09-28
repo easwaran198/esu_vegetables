@@ -21,6 +21,52 @@ var LS = {
 var SESSION_FLAG = 'esu_admin_logged_in';
 var DEFAULT_PASS = 'esu1234';
 
+var DEFAULT_VEGETABLES = [
+  { "sno": 1,  "name_ta": "தக்காளி (சின்ன பாக்ஸ்)", "name_en": "Tomato (Small Box)", "unit": "Box", "price": 280, "status": true },
+  { "sno": 2,  "name_ta": "தக்காளி (பெரிய பாக்ஸ்)", "name_en": "Tomato (Big Box)",   "unit": "Box", "price": 450, "status": true },
+  { "sno": 3,  "name_ta": "தக்காளி (சில்லறை)",      "name_en": "Tomato (Retail)",    "unit": "Kg",  "price": 25,  "status": true },
+  { "sno": 4,  "name_ta": "உருளைக்கிழங்கு",         "name_en": "Potato",             "unit": "Kg",  "price": 30,  "status": true },
+  { "sno": 5,  "name_ta": "பெரிய வெங்காயம்",       "name_en": "Big Onion",          "unit": "Kg",  "price": 40,  "status": true },
+  { "sno": 6,  "name_ta": "சின்ன வெங்காயம்",       "name_en": "Small Onion",        "unit": "Kg",  "price": 70,  "status": true },
+  { "sno": 7,  "name_ta": "கத்தரிக்காய்",            "name_en": "Brinjal",            "unit": "Kg",  "price": 40,  "status": true },
+  { "sno": 8,  "name_ta": "கேரட்",                  "name_en": "Carrot",             "unit": "Kg",  "price": 60,  "status": true },
+  { "sno": 9,  "name_ta": "பீட்ரூட்",                "name_en": "Beetroot",           "unit": "Kg",  "price": 50,  "status": true },
+  { "sno": 10, "name_ta": "முட்டைக்கோஸ்",           "name_en": "Cabbage",            "unit": "Kg",  "price": 35,  "status": true },
+  { "sno": 11, "name_ta": "காலிஃபிளவர்",            "name_en": "Cauliflower",        "unit": "Piece", "price": 45, "status": true },
+  { "sno": 12, "name_ta": "வெண்டைக்காய்",           "name_en": "Lady Finger",        "unit": "Kg",  "price": 50,  "status": true },
+  { "sno": 13, "name_ta": "முருங்கைக்காய்",          "name_en": "Drumstick",          "unit": "Kg",  "price": 60,  "status": true },
+  { "sno": 14, "name_ta": "பாகற்காய்",               "name_en": "Bitter Gourd",       "unit": "Kg",  "price": 45,  "status": true },
+  { "sno": 15, "name_ta": "சுரைக்காய்",              "name_en": "Bottle Gourd",       "unit": "Piece", "price": 35, "status": true },
+  { "sno": 16, "name_ta": "பீர்க்கங்காய்",            "name_en": "Ridge Gourd",        "unit": "Kg",  "price": 40,  "status": true },
+  { "sno": 17, "name_ta": "புடலங்காய்",              "name_en": "Snake Gourd",        "unit": "Kg",  "price": 45,  "status": true },
+  { "sno": 18, "name_ta": "மஞ்சள் பூசணிக்காய்",       "name_en": "Pumpkin",            "unit": "Kg",  "price": 25,  "status": true },
+  { "sno": 19, "name_ta": "வெள்ளைப்பூசணிக்காய்",      "name_en": "Ash Gourd",          "unit": "Kg",  "price": 25,  "status": true },
+  { "sno": 20, "name_ta": "பச்சை மிளகாய்",           "name_en": "Green Chilli",       "unit": "Kg",  "price": 70,  "status": true },
+  { "sno": 21, "name_ta": "குடமிளகாய்",              "name_en": "Capsicum",           "unit": "Kg",  "price": 55,  "status": true },
+  { "sno": 22, "name_ta": "பீன்ஸ்",                  "name_en": "Beans",              "unit": "Kg",  "price": 85,  "status": true },
+  { "sno": 23, "name_ta": "கொத்தவரங்காய்",           "name_en": "Cluster Beans",      "unit": "Kg",  "price": 50,  "status": true },
+  { "sno": 24, "name_ta": "அவரைக்காய்",              "name_en": "Broad Beans",        "unit": "Kg",  "price": 50,  "status": true },
+  { "sno": 25, "name_ta": "பட்டாணி",                "name_en": "Peas",               "unit": "Kg",  "price": 60,  "status": true },
+  { "sno": 26, "name_ta": "முள்ளங்கி",               "name_en": "Radish",             "unit": "Kg",  "price": 35,  "status": true },
+  { "sno": 27, "name_ta": "டர்னிப்",                 "name_en": "Turnip",             "unit": "Kg",  "price": 60,  "status": true },
+  { "sno": 28, "name_ta": "பசலைக்கீரை",             "name_en": "Spinach",            "unit": "Kattu", "price": 15, "status": true },
+  { "sno": 29, "name_ta": "கொத்தமல்லி",              "name_en": "Coriander",          "unit": "Kattu", "price": 10, "status": true },
+  { "sno": 30, "name_ta": "புதினா",                  "name_en": "Mint",               "unit": "Kattu", "price": 10, "status": true },
+  { "sno": 31, "name_ta": "கறிவேப்பிலை",             "name_en": "Curry Leaves",       "unit": "Kattu", "price": 10, "status": true },
+  { "sno": 32, "name_ta": "வெந்தயக்கீரை",            "name_en": "Fenugreek Leaves",   "unit": "Kattu", "price": 12, "status": true },
+  { "sno": 33, "name_ta": "வாழைப்பூ",                "name_en": "Banana Flower",      "unit": "Piece", "price": 20, "status": true },
+  { "sno": 34, "name_ta": "வாழைத்தண்டு",             "name_en": "Banana Stem",        "unit": "Piece", "price": 20, "status": true },
+  { "sno": 35, "name_ta": "வாழைக்காய்",              "name_en": "Raw Banana",         "unit": "Kg",  "price": 15,  "status": true },
+  { "sno": 36, "name_ta": "சர்க்கரைவள்ளிக்கிழங்கு",     "name_en": "Sweet Potato",       "unit": "Kg",  "price": 40,  "status": true },
+  { "sno": 37, "name_ta": "பூண்டு",                  "name_en": "Garlic",             "unit": "Kg",  "price": 220, "status": true },
+  { "sno": 38, "name_ta": "இஞ்சி",                   "name_en": "Ginger",             "unit": "Kg",  "price": 130, "status": true },
+  { "sno": 39, "name_ta": "எலுமிச்சை",               "name_en": "Lemon",              "unit": "Piece", "price": 5,   "status": true },
+  { "sno": 40, "name_ta": "கோவைக்காய்",              "name_en": "Ivy Gourd",          "unit": "Kg",  "price": 45,  "status": true },
+  { "sno": 41, "name_ta": "வெள்ளரிக்காய்",           "name_en": "Cucumber",           "unit": "Kg",  "price": 35,  "status": true },
+  { "sno": 42, "name_ta": "சவ் சவ்",                 "name_en": "Chow Chow",          "unit": "Kg",  "price": 30,  "status": true },
+  { "sno": 43, "name_ta": "காளான்",                  "name_en": "Mushroom",           "unit": "Pocket", "price": 45, "status": true }
+];
+
 var state = {
   vegetables: [],
   customers: [],
@@ -95,10 +141,52 @@ function logout() {
   window.location.reload();
 }
 
+function checkAndMigrateStorage() {
+  try {
+    var raw = localStorage.getItem(LS.VEG);
+    if (!raw) {
+      localStorage.setItem(LS.VEG, JSON.stringify(DEFAULT_VEGETABLES));
+      return DEFAULT_VEGETABLES;
+    }
+    var list = JSON.parse(raw);
+    if (!Array.isArray(list) || !list.length) {
+      localStorage.setItem(LS.VEG, JSON.stringify(DEFAULT_VEGETABLES));
+      return DEFAULT_VEGETABLES;
+    }
+    var hasSmallBox = list.some(function (v) {
+      return (v.name_en || '').toLowerCase().indexOf('small box') > -1 || (v.name_ta || '').indexOf('சின்ன பாக்ஸ்') > -1;
+    });
+    var hasSmallOnion = list.some(function (v) {
+      return (v.name_en || '').toLowerCase().indexOf('small onion') > -1 || (v.name_ta || '').indexOf('சின்ன வெங்காயம்') > -1;
+    });
+    if (!hasSmallBox || !hasSmallOnion || list.length < DEFAULT_VEGETABLES.length) {
+      var updated = [];
+      DEFAULT_VEGETABLES.forEach(function (defItem) {
+        var match = list.find(function (it) {
+          return (it.name_en && it.name_en.toLowerCase().trim() === defItem.name_en.toLowerCase().trim()) ||
+                 (it.name_ta && it.name_ta.toLowerCase().trim() === defItem.name_ta.toLowerCase().trim());
+        });
+        updated.push(match ? JSON.parse(JSON.stringify(match)) : JSON.parse(JSON.stringify(defItem)));
+      });
+      renumber(updated);
+      localStorage.setItem(LS.VEG, JSON.stringify(updated));
+      return updated;
+    }
+    return list;
+  } catch (e) {
+    localStorage.setItem(LS.VEG, JSON.stringify(DEFAULT_VEGETABLES));
+    return DEFAULT_VEGETABLES;
+  }
+}
+
 /* ---------------------------------------------------------
    Data loading (prioritize saved localStorage so edits persist on refresh)
    --------------------------------------------------------- */
 function initData() {
+  // Synchronously migrate and render immediately
+  state.vegetables = checkAndMigrateStorage();
+  renderVegTable();
+
   function loadData(path, key) {
     return fetch(path, { cache: 'no-store' })
       .then(function (r) {
@@ -106,34 +194,15 @@ function initData() {
         return r.json();
       })
       .then(function (data) {
+        if (key === LS.VEG) {
+          var updated = checkAndMigrateStorage();
+          return updated;
+        }
         var raw = localStorage.getItem(key);
         if (raw) {
           try {
             var parsed = JSON.parse(raw);
-            if (Array.isArray(parsed) && parsed.length) {
-              if (key === LS.VEG) {
-                var hasSmallBox = parsed.some(function (v) {
-                  return (v.name_en || '').toLowerCase().indexOf('small box') > -1 || (v.name_ta || '').indexOf('சின்ன பாக்ஸ்') > -1;
-                });
-                var hasSmallOnion = parsed.some(function (v) {
-                  return (v.name_en || '').toLowerCase().indexOf('small onion') > -1 || (v.name_ta || '').indexOf('சின்ன வெங்காயம்') > -1;
-                });
-                if (!hasSmallBox || !hasSmallOnion || parsed.length < data.length) {
-                  var updatedList = [];
-                  data.forEach(function (serverItem) {
-                    var match = parsed.find(function (p) {
-                      return (p.name_en && p.name_en.toLowerCase().trim() === serverItem.name_en.toLowerCase().trim()) ||
-                             (p.name_ta && p.name_ta.toLowerCase().trim() === serverItem.name_ta.toLowerCase().trim());
-                    });
-                    updatedList.push(match || serverItem);
-                  });
-                  renumber(updatedList);
-                  localStorage.setItem(key, JSON.stringify(updatedList));
-                  return updatedList;
-                }
-              }
-              return parsed;
-            }
+            if (Array.isArray(parsed) && parsed.length) return parsed;
           } catch (e) {}
         }
         if (Array.isArray(data) && data.length) {
@@ -149,7 +218,7 @@ function initData() {
             if (Array.isArray(p) && p.length) return p;
           } catch (e) {}
         }
-        return [];
+        return (key === LS.VEG) ? DEFAULT_VEGETABLES : [];
       });
   }
 
@@ -157,7 +226,7 @@ function initData() {
     loadData('data/vegetables.json', LS.VEG),
     loadData('data/customers.json', LS.CUST)
   ]).then(function (results) {
-    state.vegetables = results[0] || [];
+    state.vegetables = results[0] || state.vegetables;
     state.customers = results[1] || [];
     renderVegTable();
     renderCustTable();
@@ -530,12 +599,19 @@ function handleImport(file, type) {
 }
 
 function resetVeg() {
-  if (!confirm('Reset vegetables to the original seed data? Your edits will be lost.')) return;
+  if (!confirm('Reset vegetables to the original seed data? Your edits will be replaced with fresh catalog.')) return;
+  state.vegetables = JSON.parse(JSON.stringify(DEFAULT_VEGETABLES));
+  saveVeg();
+  renderVegTable();
   fetch('data/vegetables.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (data) {
-    state.vegetables = data;
-    saveVeg();
-    renderVegTable();
+    if (Array.isArray(data) && data.length) {
+      state.vegetables = data;
+      saveVeg();
+      renderVegTable();
+    }
     toast('Vegetables reset to seed data.');
+  }).catch(function () {
+    toast('Vegetables reset to default list.');
   });
 }
 
