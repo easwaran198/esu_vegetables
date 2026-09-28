@@ -100,27 +100,55 @@ function logout() {
    --------------------------------------------------------- */
 function initData() {
   function loadData(path, key) {
-    var raw = localStorage.getItem(key);
-    if (raw) {
-      try {
-        var parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length) {
-          return Promise.resolve(parsed);
-        }
-      } catch (e) {}
-    }
     return fetch(path, { cache: 'no-store' })
       .then(function (r) {
         if (!r.ok) throw new Error('Failed to load ' + path);
         return r.json();
       })
       .then(function (data) {
+        var raw = localStorage.getItem(key);
+        if (raw) {
+          try {
+            var parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length) {
+              if (key === LS.VEG) {
+                var hasSmallBox = parsed.some(function (v) {
+                  return (v.name_en || '').toLowerCase().indexOf('small box') > -1 || (v.name_ta || '').indexOf('சின்ன பாக்ஸ்') > -1;
+                });
+                var hasSmallOnion = parsed.some(function (v) {
+                  return (v.name_en || '').toLowerCase().indexOf('small onion') > -1 || (v.name_ta || '').indexOf('சின்ன வெங்காயம்') > -1;
+                });
+                if (!hasSmallBox || !hasSmallOnion || parsed.length < data.length) {
+                  var updatedList = [];
+                  data.forEach(function (serverItem) {
+                    var match = parsed.find(function (p) {
+                      return (p.name_en && p.name_en.toLowerCase().trim() === serverItem.name_en.toLowerCase().trim()) ||
+                             (p.name_ta && p.name_ta.toLowerCase().trim() === serverItem.name_ta.toLowerCase().trim());
+                    });
+                    updatedList.push(match || serverItem);
+                  });
+                  renumber(updatedList);
+                  localStorage.setItem(key, JSON.stringify(updatedList));
+                  return updatedList;
+                }
+              }
+              return parsed;
+            }
+          } catch (e) {}
+        }
         if (Array.isArray(data) && data.length) {
           localStorage.setItem(key, JSON.stringify(data));
         }
         return data;
       })
       .catch(function () {
+        var raw = localStorage.getItem(key);
+        if (raw) {
+          try {
+            var p = JSON.parse(raw);
+            if (Array.isArray(p) && p.length) return p;
+          } catch (e) {}
+        }
         return [];
       });
   }
