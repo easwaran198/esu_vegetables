@@ -167,30 +167,27 @@
           <div class="col-6 mb-3">
             <label class="form-label">Unit (அளவு)</label>
             <select id="vegUnit" class="form-select">
-              <optgroup label="Standard Weight">
-                <option value="kg">kg (கிலோ)</option>
-                <option value="g">g (கிராம்)</option>
-                <option value="500g">500g (அரைக் கிலோ)</option>
-                <option value="250g">250g (கால் கிலோ)</option>
+              <optgroup id="coreUnitsGroup" label="Standard Units">
+                <option value="Kg">Kg (கிலோ)</option>
+                <option value="gram">gram (கிராம்)</option>
+                <option value="Piece">Piece (எண்ணிக்கை)</option>
+                <option value="Pocket">Pocket (பாக்கெட்)</option>
+                <option value="Box">Box (பெட்டி)</option>
+                <option value="Kattu">Kattu (கட்டு)</option>
+                <option value="Mudi">Mudi (முடி)</option>
               </optgroup>
-              <optgroup label="Wholesale &amp; Bulk">
-                <option value="bag">bag (மூட்டை)</option>
-                <option value="box">box (பெட்டி)</option>
-                <option value="crate">crate (கிரேட்)</option>
-                <option value="sack">sack (சாக்கு)</option>
-                <option value="bundle">bundle (கட்டு)</option>
-                <option value="bunch">bunch (கொத்து)</option>
-                <option value="piece">piece (எண்ணிக்கை)</option>
-                <option value="packet">packet (பாக்கெட்)</option>
-                <option value="dozen">dozen (டஜன்)</option>
-                <option value="quintal">quintal (குவிண்டால்)</option>
+              <optgroup id="customUnitsGroup" label="Saved Extra Units" class="d-none">
               </optgroup>
-              <optgroup label="Custom Unit">
-                <option value="custom">Other / Custom (பிற அளவுகள்)...</option>
+              <optgroup label="Option">
+                <option value="__add_new__">+ Add Extra Unit (புதிய Unit சேர்க்க)...</option>
               </optgroup>
             </select>
             <div id="vegCustomUnitWrap" class="mt-2 d-none">
-              <input type="text" id="vegCustomUnit" class="form-control form-control-sm" placeholder="Custom unit (எ.கா: 25kg bag, கூடை)">
+              <div class="input-group input-group-sm">
+                <input type="text" id="vegCustomUnit" class="form-control" placeholder="New unit (எ.கா: Bag, Litre, Crate)">
+                <button class="btn btn-outline-success" type="button" id="vegAddCustomUnitBtn"><i class="bi bi-plus-lg"></i> Add</button>
+              </div>
+              <small class="text-muted" style="font-size: 0.72rem;">Type new unit and it will be added to the list.</small>
             </div>
           </div>
           <div class="col-6 mb-3">

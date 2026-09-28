@@ -183,8 +183,81 @@ function renderVegTable() {
 }
 
 /* ---------------------------------------------------------
-   VEGETABLES — CRUD
+   VEGETABLES — CRUD & Unit Management
    --------------------------------------------------------- */
+var UNIT_STORE_KEY = 'esu_custom_units';
+
+function getSavedCustomUnits() {
+  try {
+    var raw = localStorage.getItem(UNIT_STORE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveCustomUnit(unitName) {
+  var u = (unitName || '').trim();
+  if (!u || u === '__add_new__') return;
+  var list = getSavedCustomUnits();
+  var standard = ['kg', 'gram', 'piece', 'pocket', 'box', 'kattu', 'mudi'];
+  var exists = list.some(function (item) { return item.toLowerCase() === u.toLowerCase(); });
+  if (!exists && standard.indexOf(u.toLowerCase()) === -1) {
+    list.push(u);
+    localStorage.setItem(UNIT_STORE_KEY, JSON.stringify(list));
+  }
+}
+
+function refreshUnitDropdown(selectedUnit) {
+  var unitSelect = document.getElementById('vegUnit');
+  var customGroup = document.getElementById('customUnitsGroup');
+  if (!unitSelect || !customGroup) return;
+
+  var saved = getSavedCustomUnits();
+  if (state && state.vegetables) {
+    state.vegetables.forEach(function (v) {
+      if (v.unit) {
+        var u = v.unit.trim();
+        var standard = ['kg', 'gram', 'piece', 'pocket', 'box', 'kattu', 'mudi'];
+        var inSaved = saved.some(function (item) { return item.toLowerCase() === u.toLowerCase(); });
+        if (standard.indexOf(u.toLowerCase()) === -1 && !inSaved) {
+          saved.push(u);
+        }
+      }
+    });
+  }
+
+  if (saved.length) {
+    customGroup.classList.remove('d-none');
+    customGroup.innerHTML = saved.map(function (u) {
+      return '<option value="' + u + '">' + u + '</option>';
+    }).join('');
+  } else {
+    customGroup.classList.add('d-none');
+    customGroup.innerHTML = '';
+  }
+
+  if (selectedUnit) {
+    var matched = false;
+    for (var i = 0; i < unitSelect.options.length; i++) {
+      if (unitSelect.options[i].value.toLowerCase() === selectedUnit.toLowerCase()) {
+        unitSelect.value = unitSelect.options[i].value;
+        matched = true;
+        break;
+      }
+    }
+    if (!matched) {
+      saveCustomUnit(selectedUnit);
+      var newOpt = document.createElement('option');
+      newOpt.value = selectedUnit;
+      newOpt.textContent = selectedUnit;
+      customGroup.appendChild(newOpt);
+      customGroup.classList.remove('d-none');
+      unitSelect.value = selectedUnit;
+    }
+  }
+}
+
 var vegModal;
 function openVegModal(index) {
   document.getElementById('vegFormError').classList.add('d-none');
@@ -200,31 +273,15 @@ function openVegModal(index) {
     document.getElementById('vegNameEn').value = v.name_en || '';
     document.getElementById('vegPrice').value = v.price != null ? v.price : '';
     document.getElementById('vegStatus').checked = !!v.status;
-
-    var targetUnit = (v.unit || 'kg').toLowerCase();
-    var hasOption = false;
-    if (unitSelect) {
-      for (var i = 0; i < unitSelect.options.length; i++) {
-        if (unitSelect.options[i].value.toLowerCase() === targetUnit) {
-          hasOption = true;
-          break;
-        }
-      }
-      if (hasOption && targetUnit !== 'custom') {
-        unitSelect.value = targetUnit;
-        if (customWrap) customWrap.classList.add('d-none');
-        if (customInput) customInput.value = '';
-      } else {
-        unitSelect.value = 'custom';
-        if (customWrap) customWrap.classList.remove('d-none');
-        if (customInput) customInput.value = v.unit || '';
-      }
-    }
+    refreshUnitDropdown(v.unit || 'Kg');
+    if (customWrap) customWrap.classList.add('d-none');
+    if (customInput) customInput.value = '';
   } else {
     document.getElementById('vegModalTitle').textContent = 'Add Vegetable';
     document.getElementById('vegNameTa').value = '';
     document.getElementById('vegNameEn').value = '';
-    if (unitSelect) unitSelect.value = 'kg';
+    refreshUnitDropdown('Kg');
+    if (unitSelect) unitSelect.value = 'Kg';
     if (customWrap) customWrap.classList.add('d-none');
     if (customInput) customInput.value = '';
     document.getElementById('vegPrice').value = '';
@@ -241,10 +298,17 @@ function saveVegFromModal() {
     return;
   }
   var unitSelect = document.getElementById('vegUnit');
-  var chosenUnit = unitSelect ? unitSelect.value : 'kg';
-  if (chosenUnit === 'custom') {
+  var chosenUnit = unitSelect ? unitSelect.value : 'Kg';
+  if (chosenUnit === '__add_new__') {
     var customInput = document.getElementById('vegCustomUnit');
-    chosenUnit = (customInput && customInput.value.trim()) ? customInput.value.trim() : 'kg';
+    var typedUnit = customInput ? customInput.value.trim() : '';
+    if (typedUnit) {
+      chosenUnit = typedUnit;
+      saveCustomUnit(typedUnit);
+      refreshUnitDropdown(chosenUnit);
+    } else {
+      chosenUnit = 'Kg';
+    }
   }
 
   var record = {
@@ -505,12 +569,33 @@ document.addEventListener('DOMContentLoaded', function () {
     vegUnitSelect.addEventListener('change', function () {
       var customWrap = document.getElementById('vegCustomUnitWrap');
       var customInput = document.getElementById('vegCustomUnit');
-      if (this.value === 'custom') {
+      if (this.value === '__add_new__') {
         if (customWrap) customWrap.classList.remove('d-none');
-        if (customInput) customInput.focus();
+        if (customInput) {
+          customInput.value = '';
+          customInput.focus();
+        }
       } else {
         if (customWrap) customWrap.classList.add('d-none');
       }
+    });
+  }
+
+  var addCustomUnitBtn = document.getElementById('vegAddCustomUnitBtn');
+  if (addCustomUnitBtn) {
+    addCustomUnitBtn.addEventListener('click', function () {
+      var customInput = document.getElementById('vegCustomUnit');
+      var customWrap = document.getElementById('vegCustomUnitWrap');
+      var val = customInput ? customInput.value.trim() : '';
+      if (!val) {
+        alert('Please enter a unit name (எ.கா: Bag, Litre).');
+        return;
+      }
+      saveCustomUnit(val);
+      refreshUnitDropdown(val);
+      if (customWrap) customWrap.classList.add('d-none');
+      if (customInput) customInput.value = '';
+      toast('Unit "' + val + '" added to list.');
     });
   }
   document.getElementById('vegSearch').addEventListener('input', function () {
