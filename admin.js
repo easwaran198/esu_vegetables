@@ -96,22 +96,38 @@ function logout() {
 }
 
 /* ---------------------------------------------------------
-   Data loading (fetch server JSON fresh; localStorage fallback)
+   Data loading (prioritize saved localStorage so edits persist on refresh)
    --------------------------------------------------------- */
 function initData() {
-  function loadJson(path, key) {
+  function loadData(path, key) {
+    var raw = localStorage.getItem(key);
+    if (raw) {
+      try {
+        var parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length) {
+          return Promise.resolve(parsed);
+        }
+      } catch (e) {}
+    }
     return fetch(path, { cache: 'no-store' })
-      .then(function (r) { return r.json(); })
+      .then(function (r) {
+        if (!r.ok) throw new Error('Failed to load ' + path);
+        return r.json();
+      })
+      .then(function (data) {
+        if (Array.isArray(data) && data.length) {
+          localStorage.setItem(key, JSON.stringify(data));
+        }
+        return data;
+      })
       .catch(function () {
-        var raw = localStorage.getItem(key);
-        if (!raw) return [];
-        try { return JSON.parse(raw); } catch (e) { return []; }
+        return [];
       });
   }
 
   Promise.all([
-    loadJson('data/vegetables.json', LS.VEG),
-    loadJson('data/customers.json', LS.CUST)
+    loadData('data/vegetables.json', LS.VEG),
+    loadData('data/customers.json', LS.CUST)
   ]).then(function (results) {
     state.vegetables = results[0] || [];
     state.customers = results[1] || [];
