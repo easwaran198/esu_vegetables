@@ -99,6 +99,12 @@ function esuLoadData(storageKey, jsonPath) {
   });
 }
 
+function formatVegUnit(unit) {
+  var u = (unit || 'kg').trim();
+  if (/^\d/.test(u)) return u;
+  return '1 ' + u;
+}
+
 function formatVegPrice(item) {
   var p = item.price;
   if (p !== undefined && p !== null && p !== '') {
@@ -175,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     '<td>' + sno + '</td>' +
                     '<td class="veg-ta">' + (v.name_ta || '-') + '</td>' +
                     '<td class="veg-en">' + (v.name_en || '-') + '</td>' +
-                    '<td class="veg-unit-cell">1 ' + (v.unit || 'kg') + '</td>' +
+                    '<td class="veg-unit-cell">' + formatVegUnit(v.unit) + '</td>' +
                     '<td class="veg-price-cell">' + priceText + '</td>' +
                   '</tr>';
                 }).join('') +

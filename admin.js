@@ -189,19 +189,44 @@ var vegModal;
 function openVegModal(index) {
   document.getElementById('vegFormError').classList.add('d-none');
   document.getElementById('vegEditIndex').value = index;
+  var unitSelect = document.getElementById('vegUnit');
+  var customWrap = document.getElementById('vegCustomUnitWrap');
+  var customInput = document.getElementById('vegCustomUnit');
+
   if (index > -1) {
     var v = state.vegetables[index];
     document.getElementById('vegModalTitle').textContent = 'Edit Vegetable';
     document.getElementById('vegNameTa').value = v.name_ta || '';
     document.getElementById('vegNameEn').value = v.name_en || '';
-    document.getElementById('vegUnit').value = v.unit || 'kg';
     document.getElementById('vegPrice').value = v.price != null ? v.price : '';
     document.getElementById('vegStatus').checked = !!v.status;
+
+    var targetUnit = (v.unit || 'kg').toLowerCase();
+    var hasOption = false;
+    if (unitSelect) {
+      for (var i = 0; i < unitSelect.options.length; i++) {
+        if (unitSelect.options[i].value.toLowerCase() === targetUnit) {
+          hasOption = true;
+          break;
+        }
+      }
+      if (hasOption && targetUnit !== 'custom') {
+        unitSelect.value = targetUnit;
+        if (customWrap) customWrap.classList.add('d-none');
+        if (customInput) customInput.value = '';
+      } else {
+        unitSelect.value = 'custom';
+        if (customWrap) customWrap.classList.remove('d-none');
+        if (customInput) customInput.value = v.unit || '';
+      }
+    }
   } else {
     document.getElementById('vegModalTitle').textContent = 'Add Vegetable';
     document.getElementById('vegNameTa').value = '';
     document.getElementById('vegNameEn').value = '';
-    document.getElementById('vegUnit').value = 'kg';
+    if (unitSelect) unitSelect.value = 'kg';
+    if (customWrap) customWrap.classList.add('d-none');
+    if (customInput) customInput.value = '';
     document.getElementById('vegPrice').value = '';
     document.getElementById('vegStatus').checked = true;
   }
@@ -215,11 +240,18 @@ function saveVegFromModal() {
     document.getElementById('vegFormError').classList.remove('d-none');
     return;
   }
+  var unitSelect = document.getElementById('vegUnit');
+  var chosenUnit = unitSelect ? unitSelect.value : 'kg';
+  if (chosenUnit === 'custom') {
+    var customInput = document.getElementById('vegCustomUnit');
+    chosenUnit = (customInput && customInput.value.trim()) ? customInput.value.trim() : 'kg';
+  }
+
   var record = {
     sno: index > -1 ? state.vegetables[index].sno : state.vegetables.length + 1,
     name_ta: document.getElementById('vegNameTa').value.trim(),
     name_en: nameEn,
-    unit: document.getElementById('vegUnit').value,
+    unit: chosenUnit,
     price: parseFloat(document.getElementById('vegPrice').value) || 0,
     status: document.getElementById('vegStatus').checked
   };
@@ -468,6 +500,19 @@ document.addEventListener('DOMContentLoaded', function () {
   /* Vegetables toolbar */
   document.getElementById('vegAddBtn').addEventListener('click', function () { openVegModal(-1); });
   document.getElementById('vegSaveBtn').addEventListener('click', saveVegFromModal);
+  var vegUnitSelect = document.getElementById('vegUnit');
+  if (vegUnitSelect) {
+    vegUnitSelect.addEventListener('change', function () {
+      var customWrap = document.getElementById('vegCustomUnitWrap');
+      var customInput = document.getElementById('vegCustomUnit');
+      if (this.value === 'custom') {
+        if (customWrap) customWrap.classList.remove('d-none');
+        if (customInput) customInput.focus();
+      } else {
+        if (customWrap) customWrap.classList.add('d-none');
+      }
+    });
+  }
   document.getElementById('vegSearch').addEventListener('input', function () {
     state.vegFilter = this.value; renderVegTable();
   });
